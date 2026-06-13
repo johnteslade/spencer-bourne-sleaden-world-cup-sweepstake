@@ -430,9 +430,27 @@
         return `<span class="inline-block text-xs font-bold uppercase px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 ml-2">Scheduled</span>`;
     }
 
+    const GROUP_LABELS = {
+        'R32': { label: 'Round of 32',    icon: '⚔️' },
+        'R16': { label: 'Round of 16',    icon: '⚔️' },
+        'QF':  { label: 'Quarter-Final',  icon: '🥊' },
+        'SF':  { label: 'Semi-Final',     icon: '🌟' },
+        'FINAL':  { label: 'Final',          icon: '🏆' },
+        '3rd': { label: 'Third Place',    icon: '🥉' },
+    };
+
+    function roundBadge(group) {
+        if (!group) return '';
+        const info = GROUP_LABELS[group];
+        if (!info) return `<span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 ml-2">Group ${group}</span>`;
+        return `<span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 ml-2">${info.icon} ${info.label}</span>`;
+    }
+
     function renderMatch(match, container) {
-        const homeOwner = getOwner(match.home_team_name_en);
-        const awayOwner = getOwner(match.away_team_name_en);
+        const homeTeam = match.home_team_name_en || match.home_team_label || 'TBD';
+        const awayTeam = match.away_team_name_en || match.away_team_label || 'TBD';
+        const homeOwner = getOwner(homeTeam);
+        const awayOwner = getOwner(awayTeam);
         const ownerTags = [homeOwner, awayOwner]
             .filter(Boolean)
             .map(o => `<span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg px-2.5 py-1">${avatar(o)}${o}</span>`)
@@ -443,13 +461,13 @@
         el.innerHTML = `
             <div class="flex justify-between items-center flex-wrap gap-2">
                 <div class="text-base text-gray-800">
-                    ${getMatchFlag(match.home_team_name_en)}<strong>${match.home_team_name_en}</strong>
+                    ${getMatchFlag(homeTeam)}<strong>${homeTeam}</strong>
                     <span class="text-gray-400 mx-1">vs</span>
-                    ${getMatchFlag(match.away_team_name_en)}<strong>${match.away_team_name_en}</strong>
+                    ${getMatchFlag(awayTeam)}<strong>${awayTeam}</strong>
                 </div>
                 ${(isFinished(match) || isLive(match)) ? `<div class="text-lg font-bold text-gray-900 whitespace-nowrap tabular-nums">${match.home_score ?? '-'} – ${match.away_score ?? '-'}</div>` : ''}
             </div>
-            <div class="text-sm text-gray-500 mt-1.5">${formatGameTime(match.local_date, match.stadium_id)}${statusBadge(match)}</div>
+            <div class="text-sm text-gray-500 mt-1.5">${formatGameTime(match.local_date, match.stadium_id)}${statusBadge(match)}${roundBadge(match.group)}</div>
             ${ownerTags ? `<div class="flex flex-wrap gap-1.5 mt-2">${ownerTags}</div>` : ''}
         `;
         container.appendChild(el);
