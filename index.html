@@ -4,118 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spencer, Bourne, Sleaden World Cup 2026 Sweepstake</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; padding: 12px; margin: 0; }
-        .container { max-width: 820px; margin: 0 auto; }
-        h1 { text-align: center; color: #333; margin-bottom: 24px; font-size: clamp(1.1rem, 4vw, 1.6rem); }
-
-        /* Tabs */
-        .tabs { display: flex; flex-wrap: wrap; border-bottom: 2px solid #ddd; margin-bottom: 20px; gap: 2px; }
-        .tab-btn {
-            flex: 1 1 auto; padding: 9px 12px; border: none; background: none; cursor: pointer;
-            font-size: 0.88rem; color: #666; border-bottom: 3px solid transparent;
-            margin-bottom: -2px; border-radius: 4px 4px 0 0; transition: color 0.15s;
-            white-space: nowrap; text-align: center;
-        }
-        .tab-btn.active { color: #1a73e8; border-bottom-color: #1a73e8; font-weight: bold; }
-        .tab-btn:hover { color: #1a73e8; background: #f0f4ff; }
+        .tab-btn.active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 700; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-
-        /* Tables */
-        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; min-width: 420px; }
-        th { background: #1a73e8; color: white; padding: 10px 10px; text-align: left; font-size: 0.88rem; }
-        th.stat-col { text-align: center; }
-        td { padding: 9px 10px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 0.9rem; }
-        tr:last-child td { border-bottom: none; }
-        tr:nth-child(even) td { background: #f9f9f9; }
-        .stat-col { text-align: center; font-size: 0.88rem; color: #444; min-width: 32px; }
-        .stat-zero { color: #bbb; }
-        .team-tag {
-            display: inline-flex; align-items: center; gap: 5px;
-            background: #e8f0fe; color: #1558d6;
-            border-radius: 12px; padding: 2px 10px; margin: 2px 2px; font-size: 0.82rem;
-        }
-        .team-flag { width: 20px; height: 14px; object-fit: cover; border-radius: 2px; flex-shrink: 0; }
-        .match-flag { width: 22px; height: 15px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 4px; }
-
-        /* Match cards */
-        .match-card {
-            background: white; padding: 14px 16px; margin-bottom: 10px;
-            border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        }
-        .match-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-        .match-teams { font-size: 1rem; }
-        .match-score { font-size: 1.15rem; font-weight: bold; color: #222; white-space: nowrap; }
-        .match-meta { font-size: 0.85rem; color: #555; margin-top: 6px; }
-        .match-owners { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
-        .owner-tag {
-            display: inline-block; background: #f1f3f4; color: #333;
-            border-radius: 6px; padding: 4px 12px; font-size: 0.92rem; font-weight: 600;
-        }
-        .status-badge { font-size: 0.72rem; font-weight: bold; text-transform: uppercase;
-            display: inline-block; padding: 1px 7px; border-radius: 8px; margin-left: 6px; }
-        .status-live { background: #fde0dc; color: red; }
-        .status-finished { background: #e6f4ea; color: #1e7e34; }
-        .status-upcoming { background: #e8f0fe; color: #1558d6; }
-
-        .loading { color: #888; padding: 24px; text-align: center; }
-        .error { color: #c62828; padding: 24px; text-align: center; }
-        .no-matches { color: #aaa; text-align: center; padding: 36px; }
+        .team-flag { width: 20px; height: 14px; object-fit: cover; border-radius: 2px; flex-shrink: 0; display: inline-block; }
+        .match-flag { width: 22px; height: 15px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 4px; display: inline-block; }
     </style>
 </head>
-<body>
-<div class="container">
-    <h1>Spencer, Bourne, Sleaden<br />🏆 World Cup 2026 Sweepstake 🏆</h1>
+<body class="bg-gray-100 min-h-screen p-3 sm:p-5 text-base">
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('people', this)">👥 People</button>
-        <button class="tab-btn" onclick="showTab('teams', this)">🌍 Teams</button>
-        <button class="tab-btn" onclick="showTab('results', this)">✅ Results</button>
-        <button class="tab-btn" onclick="showTab('upcoming', this)">📅 Upcoming Games</button>
+<div class="max-w-3xl mx-auto">
+
+    <h1 class="text-center text-gray-800 font-bold mb-6 text-xl sm:text-2xl leading-snug">
+        Spencer, Bourne &amp; Sleaden<br>🏆 World Cup 2026 Sweepstake 🏆
+    </h1>
+
+    <!-- Tabs -->
+    <div class="flex flex-wrap border-b-2 border-gray-200 mb-5 gap-0.5">
+        <button class="tab-btn flex-1 py-2 px-3 text-sm text-gray-500 bg-transparent border-0 cursor-pointer rounded-t whitespace-nowrap text-center hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="showTab('people', this)">👥 People</button>
+        <button class="tab-btn flex-1 py-2 px-3 text-sm text-gray-500 bg-transparent border-0 cursor-pointer rounded-t whitespace-nowrap text-center hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="showTab('teams', this)">🌍 Teams</button>
+        <button class="tab-btn flex-1 py-2 px-3 text-sm text-gray-500 bg-transparent border-0 cursor-pointer rounded-t whitespace-nowrap text-center hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="showTab('results', this)">✅ Results</button>
+        <button class="tab-btn flex-1 py-2 px-3 text-sm text-gray-500 bg-transparent border-0 cursor-pointer rounded-t whitespace-nowrap text-center hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="showTab('upcoming', this)">📅 Upcoming</button>
     </div>
 
     <!-- People Tab -->
     <div id="tab-people" class="tab-content active">
-        <div class="table-wrap">
-        <table>
-            <thead>
-                <tr><th>#</th><th>Name</th><th>Teams</th></tr>
-            </thead>
-            <tbody id="people-tbody"></tbody>
-        </table>
+        <div class="overflow-x-auto rounded-xl shadow">
+            <table class="w-full min-w-[380px] bg-white border-collapse text-base">
+                        <th class="py-3 px-3">Name</th>
+                        <th class="py-3 px-3">Teams</th>
+                    </tr>
+                </thead>
+                <tbody id="people-tbody"></tbody>
+            </table>
         </div>
     </div>
 
     <!-- Teams Tab -->
     <div id="tab-teams" class="tab-content">
-        <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>Team</th>
-                    <th>Owner</th>
-                    <th class="stat-col">P</th>
-                    <th class="stat-col">W</th>
-                    <th class="stat-col">D</th>
-                    <th class="stat-col">L</th>
-                </tr>
-            </thead>
-            <tbody id="teams-tbody"></tbody>
-        </table>
+        <div class="overflow-x-auto rounded-xl shadow">
+            <table class="w-full min-w-[380px] bg-white border-collapse text-base">
+                        <th class="py-3 px-3">Owner</th>
+                        <th class="py-3 px-3 text-center w-10">P</th>
+                        <th class="py-3 px-3 text-center w-10">W</th>
+                        <th class="py-3 px-3 text-center w-10">D</th>
+                        <th class="py-3 px-3 text-center w-10">L</th>
+                    </tr>
+                </thead>
+                <tbody id="teams-tbody"></tbody>
+            </table>
         </div>
     </div>
 
     <!-- Results Tab -->
     <div id="tab-results" class="tab-content">
-        <div id="results-container" class="loading">Loading results…</div>
+        <div id="results-container" class="text-gray-400 text-center py-8">Loading results…</div>
     </div>
 
     <!-- Upcoming Games Tab -->
     <div id="tab-upcoming" class="tab-content">
-        <div id="upcoming-container" class="loading">Loading upcoming games…</div>
+        <div id="upcoming-container" class="text-gray-400 text-center py-8">Loading upcoming games…</div>
     </div>
+
 </div>
 
 <script>
@@ -123,25 +75,25 @@
     // SWEEPSTAKE DATA
     // ================================================================
     const participants = [
-        { name: "Arlo",    teams: ["Turkey", "DR Congo"] },
-        { name: "Luca",    teams: ["Japan", "Tunisia", "Egypt"] },
-        { name: "Louise",  teams: ["France", "Jordan"] },
-        { name: "John",  teams: ["Australia", "Panama"] },
-        { name: "Pip",     teams: ["Switzerland", "Netherlands"] },
-        { name: "James",   teams: ["Belgium", "Iraq"] },
-        { name: "Archie",  teams: ["Canada", "Spain", "Cape Verde"] },
-        { name: "Felix",   teams: ["South Africa", "Norway", "Ghana"] },
-        { name: "Jenny",    teams: ["Portugal", "Croatia"] },
-        { name: "Mike",    teams: ["Scotland", "USA", "Ivory Coast"] },
-        { name: "Diane",   teams: ["Haiti", "Sweden", "Senegal"] },
-        { name: "Jane",    teams: ["South Korea", "Morocco", "Austria"] },
-        { name: "Holly",   teams: ["Qatar", "Ecuador", "England"] },
-        { name: "Josh",    teams: ["Mexico", "Bosnia and Herzegovina"] },
-        { name: "Jack",    teams: ["Czechia", "Germany", "New Zealand"] },
-        { name: "Mat",     teams: ["Brazil", "Iran", "Uruguay"] },
-        { name: "Phoebe",  teams: ["Paraguay", "Colombia"] },
-        { name: "Amelia",  teams: ["Curacao", "Saudi Arabia", "Argentina"] },
-        { name: "Nikki",   teams: ["Algeria", "Uzbekistan"] },
+        { name: "Arlo",    color: "bg-blue-600",    teams: ["Turkey", "DR Congo"] },
+        { name: "Luca",    color: "bg-emerald-600", teams: ["Japan", "Tunisia", "Egypt"] },
+        { name: "Louise",  color: "bg-pink-500",    teams: ["France", "Jordan"] },
+        { name: "John",    color: "bg-indigo-600",  teams: ["Australia", "Panama"] },
+        { name: "Pip",     color: "bg-amber-500",   teams: ["Switzerland", "Netherlands"] },
+        { name: "James",   color: "bg-orange-500",  teams: ["Belgium", "Iraq"] },
+        { name: "Archie",  color: "bg-teal-600",    teams: ["Canada", "Spain", "Cape Verde"] },
+        { name: "Felix",   color: "bg-purple-600",  teams: ["South Africa", "Norway", "Ghana"] },
+        { name: "Jenny",   color: "bg-rose-500",    teams: ["Portugal", "Croatia"] },
+        { name: "Mike",    color: "bg-cyan-700",    teams: ["Scotland", "USA", "Ivory Coast"] },
+        { name: "Diane",   color: "bg-lime-600",    teams: ["Haiti", "Sweden", "Senegal"] },
+        { name: "Jane",    color: "bg-violet-600",  teams: ["South Korea", "Morocco", "Austria"] },
+        { name: "Holly",   color: "bg-red-500",     teams: ["Qatar", "Ecuador", "England"] },
+        { name: "Josh",    color: "bg-sky-600",     teams: ["Mexico", "Bosnia and Herzegovina"] },
+        { name: "Jack",    color: "bg-green-600",   teams: ["Czechia", "Germany", "New Zealand"] },
+        { name: "Mat",     color: "bg-yellow-600",  teams: ["Brazil", "Iran", "Uruguay"] },
+        { name: "Phoebe",  color: "bg-fuchsia-600", teams: ["Paraguay", "Colombia"] },
+        { name: "Amelia",  color: "bg-slate-500",   teams: ["Curacao", "Saudi Arabia", "Argentina"] },
+        { name: "Nikki",   color: "bg-stone-600",   teams: ["Algeria", "Uzbekistan"] },
     ];
 
     const stadiumTimezones = [
@@ -254,7 +206,7 @@
     // Normalise API team names to our canonical names
     const teamAliases = {
         "türkiye": "Turkey", "turkiye": "Turkey", "turkey": "Turkey",
-        "dr congo": "DR Congo", "congo dr": "DR Congo", "democratic republic of congo": "DR Congo",
+        "dr congo": "DR Congo", "congo dr": "DR Congo", "democratic republic of congo": "DR Congo", "democratic republic of the congo": "DR Congo",
         "japan": "Japan", "tunisia": "Tunisia", "egypt": "Egypt",
         "france": "France", "jordan": "Jordan",
         "australia": "Australia", "panama": "Panama",
@@ -288,6 +240,20 @@
     participants.forEach(p => {
         p.teams.forEach(t => { teamOwner[t.toLowerCase()] = p.name; });
     });
+
+    // Build name -> participant lookup for avatar use
+    const participantByName = {};
+    participants.forEach(p => { participantByName[p.name] = p; });
+
+    function avatar(person) {
+        const p = typeof person === 'string' ? participantByName[person] : person;
+        if (!p) return '';
+        // Photo in a circle; onerror removes img revealing coloured initial fallback
+        return `<span class="relative inline-flex items-center justify-center w-7 h-7 rounded-full overflow-hidden flex-shrink-0 ${p.color}" title="${p.name}">` +
+               `<span class="text-white text-xs font-bold">${p.name[0]}</span>` +
+               `<img src="people/${p.name}.jpg" alt="" class="absolute inset-0 w-full h-full object-cover object-top" onerror="this.remove()">` +
+               `</span>`;
+    }
 
     // Flag lookup: canonical name (lowercase) -> flag URL — populated at init
     const teamFlags = {};
@@ -344,6 +310,9 @@
         btn.classList.add('active');
     }
 
+    // Set first tab active on load
+    document.querySelector('.tab-btn').classList.add('active');
+
     // ================================================================
     // TEAM STATS  (keyed by canonical team name, lowercase)
     // ================================================================
@@ -375,7 +344,8 @@
     }
 
     function statCell(val) {
-        return `<td class="stat-col${val === 0 ? ' stat-zero' : ''}"><strong>${val}</strong></td>`;
+        const colour = val === 0 ? 'text-gray-300' : 'text-gray-700';
+        return `<td class="py-2.5 px-2 text-center align-middle ${colour}"><strong>${val}</strong></td>`;
     }
 
     // ================================================================
@@ -384,12 +354,19 @@
     function renderPeople() {
         const tbody = document.getElementById('people-tbody');
         tbody.innerHTML = '';
-        participants.forEach((p, i) => {
+        const sorted = [...participants].sort((a, b) => a.name.localeCompare(b.name));
+        sorted.forEach((p, i) => {
             const tr = document.createElement('tr');
+            tr.className = i % 2 === 1 ? 'bg-gray-50' : 'bg-white';
             tr.innerHTML = `
-                <td>${i + 1}</td>
-                <td><strong>${p.name}</strong></td>
-                <td>${p.teams.map(t => `<span class="team-tag">${getFlag(t)}${t}</span>`).join('')}</td>
+                <td class="py-2.5 px-3 text-gray-400 text-xs">${i + 1}</td>
+                <td class="py-2.5 px-3">
+                    <div class="flex items-center gap-2">
+                        ${avatar(p)}
+                        <span class="font-semibold text-gray-800">${p.name}</span>
+                    </div>
+                </td>
+                <td class="py-2.5 px-3">${p.teams.map(t => `<span class="inline-flex items-center gap-1 bg-blue-50 text-gray-800 text-sm rounded-full px-2.5 py-0.5 m-0.5">${getFlag(t)}${t}</span>`).join('')}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -414,11 +391,17 @@
         // Sort by points (3W+1D) desc, then games played desc, then name asc
         rows.sort((a, b) => (b.w * 3 + b.d) - (a.w * 3 + a.d) || b.p - a.p || a.team.localeCompare(b.team));
 
-        rows.forEach(r => {
+        rows.forEach((r, i) => {
             const tr = document.createElement('tr');
+            tr.className = i % 2 === 1 ? 'bg-gray-50' : 'bg-white';
             tr.innerHTML = `
-                <td><span style="display:inline-flex;align-items:center;gap:7px">${getFlag(r.team)}<strong>${r.team}</strong></span></td>
-                <td>${r.owner}</td>
+                <td class="py-2.5 px-3"><span class="inline-flex items-center gap-2">${getFlag(r.team)}<strong class="text-gray-800">${r.team}</strong></span></td>
+                <td class="py-2.5 px-3">
+                    <div class="flex items-center gap-2">
+                        ${avatar(r.owner)}
+                        <span class="text-gray-700">${r.owner}</span>
+                    </div>
+                </td>
                 ${statCell(r.p)}
                 ${statCell(r.w)}
                 ${statCell(r.d)}
@@ -442,9 +425,9 @@
     }
 
     function statusBadge(match) {
-        if (isLive(match)) return `<span class="status-badge status-live">Live</span>`;
-        if (isFinished(match)) return `<span class="status-badge status-finished">FT</span>`;
-        return `<span class="status-badge status-upcoming">Scheduled</span>`;
+        if (isLive(match)) return `<span class="inline-block text-xs font-bold uppercase px-2 py-0.5 rounded-full bg-red-100 text-red-600 ml-2">Live</span>`;
+        if (isFinished(match)) return `<span class="inline-block text-xs font-bold uppercase px-2 py-0.5 rounded-full bg-green-100 text-green-700 ml-2">FT</span>`;
+        return `<span class="inline-block text-xs font-bold uppercase px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 ml-2">Scheduled</span>`;
     }
 
     function renderMatch(match, container) {
@@ -452,22 +435,22 @@
         const awayOwner = getOwner(match.away_team_name_en);
         const ownerTags = [homeOwner, awayOwner]
             .filter(Boolean)
-            .map(o => `<span class="owner-tag">${o}</span>`)
-            .join(' ');
+            .map(o => `<span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg px-2.5 py-1">${avatar(o)}${o}</span>`)
+            .join('');
 
         const el = document.createElement('div');
-        el.className = 'match-card';
+        el.className = 'bg-white rounded-xl shadow-sm p-4 mb-3 border border-gray-100';
         el.innerHTML = `
-            <div class="match-header">
-                <div class="match-teams">
+            <div class="flex justify-between items-center flex-wrap gap-2">
+                <div class="text-base text-gray-800">
                     ${getMatchFlag(match.home_team_name_en)}<strong>${match.home_team_name_en}</strong>
-                    &nbsp;vs&nbsp;
+                    <span class="text-gray-400 mx-1">vs</span>
                     ${getMatchFlag(match.away_team_name_en)}<strong>${match.away_team_name_en}</strong>
                 </div>
-                <div class="match-score">${match.home_score ?? '-'} – ${match.away_score ?? '-'}</div>
+                <div class="text-lg font-bold text-gray-900 whitespace-nowrap tabular-nums">${match.home_score ?? '-'} – ${match.away_score ?? '-'}</div>
             </div>
-            <div class="match-meta">${formatGameTime(match.local_date, match.stadium_id)}${statusBadge(match)}</div>
-            ${ownerTags ? `<div class="match-owners">${ownerTags}</div>` : ''}
+            <div class="text-sm text-gray-500 mt-1.5">${formatGameTime(match.local_date, match.stadium_id)}${statusBadge(match)}</div>
+            ${ownerTags ? `<div class="flex flex-wrap gap-1.5 mt-2">${ownerTags}</div>` : ''}
         `;
         container.appendChild(el);
     }
@@ -497,19 +480,19 @@
                 });
 
             if (finished.length === 0) {
-                resultsEl.innerHTML = '<div class="no-matches">No finished matches yet.</div>';
+                resultsEl.innerHTML = '<div class="text-gray-400 text-center py-10">No finished matches yet.</div>';
             } else {
                 finished.forEach(m => renderMatch(m, resultsEl));
             }
 
             if (notFinished.length === 0) {
-                upcomingEl.innerHTML = '<div class="no-matches">No upcoming matches found.</div>';
+                upcomingEl.innerHTML = '<div class="text-gray-400 text-center py-10">No upcoming matches found.</div>';
             } else {
                 notFinished.forEach(m => renderMatch(m, upcomingEl));
             }
         } catch (error) {
-            document.getElementById('results-container').innerHTML = '<div class="error">Failed to load results.</div>';
-            document.getElementById('upcoming-container').innerHTML = '<div class="error">Failed to load upcoming games.</div>';
+            document.getElementById('results-container').innerHTML = '<div class="text-red-600 text-center py-8">Failed to load results.</div>';
+            document.getElementById('upcoming-container').innerHTML = '<div class="text-red-600 text-center py-8">Failed to load upcoming games.</div>';
             console.error(error);
         }
     }
