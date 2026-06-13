@@ -46,6 +46,7 @@
     <div id="tab-teams" class="tab-content">
         <div class="overflow-x-auto rounded-xl shadow">
             <table class="w-full min-w-[380px] bg-white border-collapse text-base">
+                        <th class="py-3 px-3">Team</th>
                         <th class="py-3 px-3">Owner</th>
                         <th class="py-3 px-3 text-center w-10">P</th>
                         <th class="py-3 px-3 text-center w-10">W</th>
@@ -447,7 +448,7 @@
                     <span class="text-gray-400 mx-1">vs</span>
                     ${getMatchFlag(match.away_team_name_en)}<strong>${match.away_team_name_en}</strong>
                 </div>
-                <div class="text-lg font-bold text-gray-900 whitespace-nowrap tabular-nums">${match.home_score ?? '-'} – ${match.away_score ?? '-'}</div>
+                ${(isFinished(match) || isLive(match)) ? `<div class="text-lg font-bold text-gray-900 whitespace-nowrap tabular-nums">${match.home_score ?? '-'} – ${match.away_score ?? '-'}</div>` : ''}
             </div>
             <div class="text-sm text-gray-500 mt-1.5">${formatGameTime(match.local_date, match.stadium_id)}${statusBadge(match)}</div>
             ${ownerTags ? `<div class="flex flex-wrap gap-1.5 mt-2">${ownerTags}</div>` : ''}
@@ -470,7 +471,11 @@
             resultsEl.innerHTML = '';
             upcomingEl.innerHTML = '';
 
-            const finished = games.filter(isFinished);
+            const finished = games.filter(isFinished).sort((a, b) => {
+                    const ta = parseGameTime(a.local_date, a.stadium_id);
+                    const tb = parseGameTime(b.local_date, b.stadium_id);
+                    return (tb || 0) - (ta || 0);
+                });
             const notFinished = games
                 .filter(g => !isFinished(g))
                 .sort((a, b) => {
