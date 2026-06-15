@@ -11,9 +11,30 @@
         .tab-content.active { display: block; }
         .team-flag { width: 20px; height: 14px; object-fit: cover; border-radius: 2px; flex-shrink: 0; display: inline-block; }
         .match-flag { width: 22px; height: 15px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 4px; display: inline-block; }
+        #loading-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(243, 244, 246, 0.92);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 16px;
+        }
+        #loading-overlay.hidden { display: none; }
+        .spinner {
+            width: 52px; height: 52px;
+            border: 5px solid #e5e7eb;
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-3 sm:p-5 text-base">
+
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <p class="text-gray-500 text-sm font-medium">Loading sweepstake data…</p>
+</div>
 
 <div class="max-w-3xl mx-auto">
 
@@ -96,6 +117,172 @@
         { name: "Amelia",  color: "bg-slate-500",   teams: ["Curacao", "Saudi Arabia", "Argentina"] },
         { name: "Nikki",   color: "bg-stone-600",   teams: ["Algeria", "Uzbekistan"] },
     ];
+
+    const worldCupSchedule = {
+        "Algeria": {
+            "Austria": "BBC",
+            "Argentina": "ITV"
+        },
+        "Argentina": {
+            "Algeria": "ITV",
+            "Austria": "BBC",
+            "Jordan": "BBC"
+        },
+        "Australia": {
+            "Turkey": "ITV",
+            "USA": "BBC",
+            "Paraguay": "ITV"
+        },
+        "Austria": {
+            "Jordan": "BBC",
+            "Argentina": "BBC",
+            "Algeria": "BBC"
+        },
+        "Belgium": {
+            "Egypt": "BBC",
+            "Iran": "ITV",
+            "New Zealand": "BBC"
+        },
+        "Bosnia-Herzegovina": {
+            "Canada": "BBC",
+            "Qatar": "ITV"
+        },
+        "Brazil": {
+            "Morocco": "BBC",
+            "Haiti": "ITV",
+            "Scotland": "BBC"
+        },
+        "Canada": {
+            "Bosnia-Herzegovina": "BBC",
+            "Qatar": "ITV",
+            "Switzerland": "ITV"
+        },
+        "Cape Verde": {
+            "Saudi Arabia": "ITV"
+        },
+        "Colombia": {
+            "Uzbekistan": "BBC",
+            "DR Congo": "ITV",
+            "Portugal": "BBC"
+        },
+        "Croatia": {
+            "Ghana": "ITV"
+        },
+        "Curacao": {
+            "Ivory Coast": "BBC"
+        },
+        "Czech Republic": {
+            "South Africa": "BBC",
+            "Mexico": "BBC"
+        },
+        "DR Congo": {
+            "Uzbekistan": "BBC"
+        },
+        "Ecuador": {
+            "Curacao": "BBC",
+            "Germany": "BBC"
+        },
+        "Egypt": {
+            "Iran": "BBC"
+        },
+        "England": {
+            "Croatia": "ITV",
+            "Ghana": "BBC",
+            "Panama": "ITV"
+        },
+        "France": {
+            "Senegal": "BBC",
+            "Iraq": "BBC"
+        },
+        "Germany": {
+            "Ivory Coast": "ITV"
+        },
+        "Ghana": {
+            "Panama": "ITV"
+        },
+        "Haiti": {
+            "Morocco": "BBC"
+        },
+        "Iran": {
+            "New Zealand": "BBC"
+        },
+        "Iraq": {
+            "Norway": "BBC",
+            "Senegal": "ITV"
+        },
+        "Ivory Coast": {
+            "Ecuador": "BBC"
+        },
+        "Japan": {
+            "Sweden": "BBC"
+        },
+        "Jordan": {
+            "Algeria": "ITV"
+        },
+        "Mexico": {
+            "South Korea": "BBC"
+        },
+        "Morocco": {
+            "Haiti": "BBC"
+        },
+        "Netherlands": {
+            "Japan": "ITV",
+            "Sweden": "BBC"
+        },
+        "New Zealand": {
+            "Egypt": "ITV"
+        },
+        "Norway": {
+            "Senegal": "ITV",
+            "France": "ITV"
+        },
+        "Panama": {
+            "Croatia": "BBC"
+        },
+        "Portugal": {
+            "DR Congo": "BBC",
+            "Uzbekistan": "ITV"
+        },
+        "Qatar": {
+            "Switzerland": "ITV"
+        },
+        "Saudi Arabia": {
+            "Uruguay": "ITV"
+        },
+        "Scotland": {
+            "Morocco": "ITV",
+            "Brazil": "BBC"
+        },
+        "South Africa": {
+            "South Korea": "BBC"
+        },
+        "Spain": {
+            "Cape Verde": "ITV",
+            "Saudi Arabia": "BBC"
+        },
+        "Sweden": {
+            "Tunisia": "ITV"
+        },
+        "Switzerland": {
+            "Bosnia-Herzegovina": "ITV",
+            "Canada": "ITV"
+        },
+        "Tunisia": {
+            "Japan": "BBC",
+            "Netherlands": "BBC"
+        },
+        "Turkey": {
+            "USA": "ITV",
+            "Paraguay": "ITV"
+        },
+        "Uruguay": {
+            "Cape Verde": "BBC",
+            "Spain": "ITV"
+        },
+        "USA": {
+            "Australia": "BBC"
+        }
+    };
 
     const stadiumTimezones = [
         {
@@ -301,6 +488,26 @@
         return teamOwner[normalised.toLowerCase()] || null;
     }
 
+    // Normalise schedule names (worldCupSchedule uses slightly different names)
+    function normForSchedule(name) {
+        const canonical = normaliseTeam(name);
+        const extra = { 'Bosnia-Herzegovina': 'Bosnia and Herzegovina' };
+        return (extra[canonical] || canonical).toLowerCase();
+    }
+
+    function getChannel(homeTeam, awayTeam) {
+        const h = normForSchedule(homeTeam);
+        const a = normForSchedule(awayTeam);
+        for (const [sh, opponents] of Object.entries(worldCupSchedule)) {
+            const shN = normForSchedule(sh);
+            for (const [sa, channel] of Object.entries(opponents)) {
+                const saN = normForSchedule(sa);
+                if ((shN === h && saN === a) || (shN === a && saN === h)) return channel;
+            }
+        }
+        return null;
+    }
+
     // ================================================================
     // TAB SWITCHING
     // ================================================================
@@ -446,6 +653,11 @@
         return `<span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 ml-2">${info.icon} ${info.label}</span>`;
     }
 
+    function channelBadge(channel) {
+        if (!channel) return '';
+        return `<img src="channels/${channel}.png" alt="${channel}" title="${channel}" class="inline-block h-4 ml-2 align-middle" onerror="this.style.display='none'">`;
+    }
+
     function renderMatch(match, container) {
         const homeTeam = match.home_team_name_en || match.home_team_label || 'TBD';
         const awayTeam = match.away_team_name_en || match.away_team_label || 'TBD';
@@ -455,6 +667,7 @@
             .filter(Boolean)
             .map(o => `<span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg px-2.5 py-1">${avatar(o)}${o}</span>`)
             .join('');
+        const channel = !isFinished(match) ? getChannel(homeTeam, awayTeam) : null;
 
         const el = document.createElement('div');
         el.className = 'bg-white rounded-xl shadow-sm p-4 mb-3 border border-gray-100';
@@ -467,7 +680,7 @@
                 </div>
                 ${(isFinished(match) || isLive(match)) ? `<div class="text-lg font-bold text-gray-900 whitespace-nowrap tabular-nums">${match.home_score ?? '-'} – ${match.away_score ?? '-'}</div>` : ''}
             </div>
-            <div class="text-sm text-gray-500 mt-1.5">${formatGameTime(match.local_date, match.stadium_id)}${statusBadge(match)}${roundBadge(match.group)}</div>
+            <div class="text-sm text-gray-500 mt-1.5">${formatGameTime(match.local_date, match.stadium_id)}${statusBadge(match)}${roundBadge(match.group)}${channelBadge(channel)}</div>
             ${ownerTags ? `<div class="flex flex-wrap gap-1.5 mt-2">${ownerTags}</div>` : ''}
         `;
         container.appendChild(el);
@@ -522,8 +735,8 @@
     // ================================================================
     // INIT
     // ================================================================
-    loadTeamFlags().then(() => {
-        fetchAndRender();
+    Promise.all([loadTeamFlags(), fetchAndRender()]).finally(() => {
+        document.getElementById('loading-overlay').classList.add('hidden');
     });
     setInterval(fetchAndRender, 60000);
 </script>
