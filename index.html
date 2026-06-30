@@ -11,30 +11,9 @@
         .tab-content.active { display: block; }
         .team-flag { width: 20px; height: 14px; object-fit: cover; border-radius: 2px; flex-shrink: 0; display: inline-block; }
         .match-flag { width: 22px; height: 15px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin-right: 4px; display: inline-block; }
-        #loading-overlay {
-            position: fixed; inset: 0; z-index: 9999;
-            background: rgba(243, 244, 246, 0.92);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            gap: 16px;
-        }
-        #loading-overlay.hidden { display: none; }
-        .spinner {
-            width: 52px; height: 52px;
-            border: 5px solid #e5e7eb;
-            border-top-color: #2563eb;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-3 sm:p-5 text-base">
-
-<div id="loading-overlay">
-    <div class="spinner"></div>
-    <p class="text-gray-500 text-sm font-medium">Loading sweepstake data…</p>
-</div>
 
 <div class="max-w-3xl mx-auto">
 
@@ -46,6 +25,7 @@
     <div class="flex flex-wrap border-b-2 border-gray-200 mb-5 gap-0.5">
         <button class="tab-btn flex-1 py-2 px-3 text-sm text-gray-500 bg-transparent border-0 cursor-pointer rounded-t whitespace-nowrap text-center hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="showTab('people', this)">👥 People</button>
         <button class="tab-btn flex-1 py-2 px-3 text-sm text-gray-500 bg-transparent border-0 cursor-pointer rounded-t whitespace-nowrap text-center hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="showTab('teams', this)">🌍 Teams</button>
+        <button class="tab-btn flex-1 py-2 px-3 text-sm text-gray-500 bg-transparent border-0 cursor-pointer rounded-t whitespace-nowrap text-center hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="showTab('bracket', this)">🗂️ Bracket</button>
         <button class="tab-btn flex-1 py-2 px-3 text-sm text-gray-500 bg-transparent border-0 cursor-pointer rounded-t whitespace-nowrap text-center hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="showTab('results', this)">✅ Results</button>
         <button class="tab-btn flex-1 py-2 px-3 text-sm text-gray-500 bg-transparent border-0 cursor-pointer rounded-t whitespace-nowrap text-center hover:text-blue-600 hover:bg-blue-50 transition-colors" onclick="showTab('upcoming', this)">📅 Upcoming</button>
     </div>
@@ -69,6 +49,9 @@
             <table class="w-full min-w-[380px] bg-white border-collapse text-base">
                         <th class="py-3 px-3">Team</th>
                         <th class="py-3 px-3">Owner</th>
+                        <th class="py-3 px-3">Last Stage</th>
+                        <th class="py-3 px-3 text-center w-12">Pts</th>
+                        <th class="py-3 px-3 text-center w-12">GD</th>
                         <th class="py-3 px-3 text-center w-10">P</th>
                         <th class="py-3 px-3 text-center w-10">W</th>
                         <th class="py-3 px-3 text-center w-10">D</th>
@@ -77,6 +60,15 @@
                 </thead>
                 <tbody id="teams-tbody"></tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Bracket Tab -->
+    <div id="tab-bracket" class="tab-content">
+        <div class="overflow-x-auto pb-4 -mx-3 sm:-mx-5 px-3 sm:px-5">
+            <div class="flex gap-3 items-start min-w-max" id="bracket-container">
+                <div class="text-gray-400 text-center py-8">Loading bracket…</div>
+            </div>
         </div>
     </div>
 
@@ -117,172 +109,6 @@
         { name: "Amelia",  color: "bg-slate-500",   teams: ["Curacao", "Saudi Arabia", "Argentina"] },
         { name: "Nikki",   color: "bg-stone-600",   teams: ["Algeria", "Uzbekistan"] },
     ];
-
-    const worldCupSchedule = {
-        "Algeria": {
-            "Austria": "BBC",
-            "Argentina": "ITV"
-        },
-        "Argentina": {
-            "Algeria": "ITV",
-            "Austria": "BBC",
-            "Jordan": "BBC"
-        },
-        "Australia": {
-            "Turkey": "ITV",
-            "USA": "BBC",
-            "Paraguay": "ITV"
-        },
-        "Austria": {
-            "Jordan": "BBC",
-            "Argentina": "BBC",
-            "Algeria": "BBC"
-        },
-        "Belgium": {
-            "Egypt": "BBC",
-            "Iran": "ITV",
-            "New Zealand": "BBC"
-        },
-        "Bosnia-Herzegovina": {
-            "Canada": "BBC",
-            "Qatar": "ITV"
-        },
-        "Brazil": {
-            "Morocco": "BBC",
-            "Haiti": "ITV",
-            "Scotland": "BBC"
-        },
-        "Canada": {
-            "Bosnia-Herzegovina": "BBC",
-            "Qatar": "ITV",
-            "Switzerland": "ITV"
-        },
-        "Cape Verde": {
-            "Saudi Arabia": "ITV"
-        },
-        "Colombia": {
-            "Uzbekistan": "BBC",
-            "DR Congo": "ITV",
-            "Portugal": "BBC"
-        },
-        "Croatia": {
-            "Ghana": "ITV"
-        },
-        "Curacao": {
-            "Ivory Coast": "BBC"
-        },
-        "Czech Republic": {
-            "South Africa": "BBC",
-            "Mexico": "BBC"
-        },
-        "DR Congo": {
-            "Uzbekistan": "BBC"
-        },
-        "Ecuador": {
-            "Curacao": "BBC",
-            "Germany": "BBC"
-        },
-        "Egypt": {
-            "Iran": "BBC"
-        },
-        "England": {
-            "Croatia": "ITV",
-            "Ghana": "BBC",
-            "Panama": "ITV"
-        },
-        "France": {
-            "Senegal": "BBC",
-            "Iraq": "BBC"
-        },
-        "Germany": {
-            "Ivory Coast": "ITV"
-        },
-        "Ghana": {
-            "Panama": "ITV"
-        },
-        "Haiti": {
-            "Morocco": "BBC"
-        },
-        "Iran": {
-            "New Zealand": "BBC"
-        },
-        "Iraq": {
-            "Norway": "BBC",
-            "Senegal": "ITV"
-        },
-        "Ivory Coast": {
-            "Ecuador": "BBC"
-        },
-        "Japan": {
-            "Sweden": "BBC"
-        },
-        "Jordan": {
-            "Algeria": "ITV"
-        },
-        "Mexico": {
-            "South Korea": "BBC"
-        },
-        "Morocco": {
-            "Haiti": "BBC"
-        },
-        "Netherlands": {
-            "Japan": "ITV",
-            "Sweden": "BBC"
-        },
-        "New Zealand": {
-            "Egypt": "ITV"
-        },
-        "Norway": {
-            "Senegal": "ITV",
-            "France": "ITV"
-        },
-        "Panama": {
-            "Croatia": "BBC"
-        },
-        "Portugal": {
-            "DR Congo": "BBC",
-            "Uzbekistan": "ITV"
-        },
-        "Qatar": {
-            "Switzerland": "ITV"
-        },
-        "Saudi Arabia": {
-            "Uruguay": "ITV"
-        },
-        "Scotland": {
-            "Morocco": "ITV",
-            "Brazil": "BBC"
-        },
-        "South Africa": {
-            "South Korea": "BBC"
-        },
-        "Spain": {
-            "Cape Verde": "ITV",
-            "Saudi Arabia": "BBC"
-        },
-        "Sweden": {
-            "Tunisia": "ITV"
-        },
-        "Switzerland": {
-            "Bosnia-Herzegovina": "ITV",
-            "Canada": "ITV"
-        },
-        "Tunisia": {
-            "Japan": "BBC",
-            "Netherlands": "BBC"
-        },
-        "Turkey": {
-            "USA": "ITV",
-            "Paraguay": "ITV"
-        },
-        "Uruguay": {
-            "Cape Verde": "BBC",
-            "Spain": "ITV"
-        },
-        "USA": {
-            "Australia": "BBC"
-        }
-    };
 
     const stadiumTimezones = [
         {
@@ -488,26 +314,6 @@
         return teamOwner[normalised.toLowerCase()] || null;
     }
 
-    // Normalise schedule names (worldCupSchedule uses slightly different names)
-    function normForSchedule(name) {
-        const canonical = normaliseTeam(name);
-        const extra = { 'Bosnia-Herzegovina': 'Bosnia and Herzegovina' };
-        return (extra[canonical] || canonical).toLowerCase();
-    }
-
-    function getChannel(homeTeam, awayTeam) {
-        const h = normForSchedule(homeTeam);
-        const a = normForSchedule(awayTeam);
-        for (const [sh, opponents] of Object.entries(worldCupSchedule)) {
-            const shN = normForSchedule(sh);
-            for (const [sa, channel] of Object.entries(opponents)) {
-                const saN = normForSchedule(sa);
-                if ((shN === h && saN === a) || (shN === a && saN === h)) return channel;
-            }
-        }
-        return null;
-    }
-
     // ================================================================
     // TAB SWITCHING
     // ================================================================
@@ -524,11 +330,19 @@
     // ================================================================
     // TEAM STATS  (keyed by canonical team name, lowercase)
     // ================================================================
+    const KNOCKOUT_STAGES = ['R32', 'R16', 'QF', 'SF', '3rd', 'FINAL'];
+    const STAGE_ORDER = { 'group': 0, 'R32': 1, 'R16': 2, 'QF': 3, 'SF': 4, '3rd': 5, 'FINAL': 6 };
+
     const teamStats = {};
+    const teamGroupStats = {}; // group stage only: { pts, gd }
+    const teamKnockoutInfo = {}; // knockout stage info: { stage, eliminated }
 
     function buildTeamStats(games) {
         // Reset
         Object.keys(teamStats).forEach(k => delete teamStats[k]);
+        Object.keys(teamGroupStats).forEach(k => delete teamGroupStats[k]);
+        Object.keys(teamKnockoutInfo).forEach(k => delete teamKnockoutInfo[k]);
+
         games.filter(isFinished).forEach(m => {
             const homeKey = normaliseTeam(m.home_team_name_en).toLowerCase();
             const awayKey = normaliseTeam(m.away_team_name_en).toLowerCase();
@@ -543,7 +357,115 @@
             if (hs > as)      { teamStats[homeKey].w++; teamStats[awayKey].l++; }
             else if (hs < as) { teamStats[homeKey].l++; teamStats[awayKey].w++; }
             else              { teamStats[homeKey].d++; teamStats[awayKey].d++; }
+
+            // Group stage only: track Pts and GD
+            if (!KNOCKOUT_STAGES.includes(m.group)) {
+                [homeKey, awayKey].forEach(k => {
+                    if (!teamGroupStats[k]) teamGroupStats[k] = { pts: 0, gd: 0 };
+                });
+                teamGroupStats[homeKey].gd += (hs - as);
+                teamGroupStats[awayKey].gd += (as - hs);
+                if (hs > as)      { teamGroupStats[homeKey].pts += 3; }
+                else if (hs < as) { teamGroupStats[awayKey].pts += 3; }
+                else              { teamGroupStats[homeKey].pts += 1; teamGroupStats[awayKey].pts += 1; }
+            }
         });
+
+        buildKnockoutInfo(games);
+    }
+
+    function buildKnockoutInfo(games) {
+        const knockoutGames = games.filter(g => KNOCKOUT_STAGES.includes(g.group));
+
+        // Find all teams that appear in any knockout game (real names, not TBD)
+        const teamsInKnockout = new Set();
+        knockoutGames.forEach(g => {
+            const home = normaliseTeam(g.home_team_name_en || '');
+            const away = normaliseTeam(g.away_team_name_en || '');
+            if (home && home.toLowerCase() !== 'tbd') teamsInKnockout.add(home.toLowerCase());
+            if (away && away.toLowerCase() !== 'tbd') teamsInKnockout.add(away.toLowerCase());
+        });
+
+        // If all R32 slots are filled, teams missing from KO games didn't qualify
+        const r32Games = knockoutGames.filter(g => g.group === 'R32');
+        const r32Filled = r32Games.length > 0 && r32Games.every(g => {
+            const h = (g.home_team_name_en || '').toLowerCase();
+            const a = (g.away_team_name_en || '').toLowerCase();
+            return h && h !== 'tbd' && a && a !== 'tbd';
+        });
+
+        if (r32Filled) {
+            participants.forEach(p => {
+                p.teams.forEach(t => {
+                    const key = normaliseTeam(t).toLowerCase();
+                    if (!teamsInKnockout.has(key) && !teamKnockoutInfo[key]) {
+                        teamKnockoutInfo[key] = { stage: 'group', eliminated: true };
+                    }
+                });
+            });
+        }
+
+        // Process finished KO games: track last stage reached and elimination
+        knockoutGames.filter(isFinished).forEach(m => {
+            const homeKey = normaliseTeam(m.home_team_name_en).toLowerCase();
+            const awayKey = normaliseTeam(m.away_team_name_en).toLowerCase();
+            const hs = parseInt(m.home_score, 10);
+            const as = parseInt(m.away_score, 10);
+            const stage = m.group;
+            [homeKey, awayKey].forEach(k => {
+                if (!teamKnockoutInfo[k]) teamKnockoutInfo[k] = { stage: null, eliminated: false };
+                const info = teamKnockoutInfo[k];
+                if (!info.stage || STAGE_ORDER[stage] > STAGE_ORDER[info.stage || 'group']) {
+                    info.stage = stage;
+                }
+            });
+            if (!isNaN(hs) && !isNaN(as)) {
+                let loserKey = null;
+                if (hs !== as) {
+                    // Decided in regular / extra time
+                    loserKey = hs > as ? awayKey : homeKey;
+                } else {
+                    // Draw after 90 min — check penalty shootout
+                    const hPen = parseInt(m.home_penalty_score, 10);
+                    const aPen = parseInt(m.away_penalty_score, 10);
+                    if (!isNaN(hPen) && !isNaN(aPen) && hPen !== aPen) {
+                        loserKey = hPen > aPen ? awayKey : homeKey;
+                    }
+                }
+                if (loserKey && teamKnockoutInfo[loserKey]) teamKnockoutInfo[loserKey].eliminated = true;
+            }
+        });
+
+        // Track upcoming KO games to know the current stage of active teams
+        knockoutGames.filter(g => !isFinished(g)).forEach(m => {
+            const homeKey = normaliseTeam(m.home_team_name_en || '').toLowerCase();
+            const awayKey = normaliseTeam(m.away_team_name_en || '').toLowerCase();
+            const stage = m.group;
+            [homeKey, awayKey].forEach(k => {
+                if (!k || k === 'tbd') return;
+                if (!teamKnockoutInfo[k]) teamKnockoutInfo[k] = { stage: null, eliminated: false };
+                const info = teamKnockoutInfo[k];
+                if (!info.eliminated && (!info.stage || STAGE_ORDER[stage] > STAGE_ORDER[info.stage || 'group'])) {
+                    info.stage = stage;
+                }
+            });
+        });
+    }
+
+    function isTeamEliminated(teamName) {
+        const key = normaliseTeam(teamName).toLowerCase();
+        return teamKnockoutInfo[key]?.eliminated === true;
+    }
+
+    function getLastStageCell(teamName) {
+        const key = normaliseTeam(teamName).toLowerCase();
+        const info = teamKnockoutInfo[key];
+        if (!info || !info.stage) return `<td class="py-2.5 px-3 text-center align-middle"><span class="text-gray-300 text-xs">&mdash;</span></td>`;
+        const label = info.stage === 'group'
+            ? 'Group Stage'
+            : (GROUP_LABELS[info.stage] ? GROUP_LABELS[info.stage].label : info.stage);
+        const badgeClass = info.eliminated ? 'bg-gray-100 text-gray-400' : 'bg-blue-50 text-blue-700';
+        return `<td class="py-2.5 px-3 align-middle"><span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full ${badgeClass} whitespace-nowrap">${label}</span></td>`;
     }
 
     function getStats(teamName) {
@@ -551,9 +473,26 @@
         return teamStats[key] || { p: 0, w: 0, d: 0, l: 0 };
     }
 
-    function statCell(val) {
+    function statCell(val, eliminated) {
+        if (eliminated) return `<td class="py-2.5 px-2 text-center align-middle text-gray-400"><span class="line-through">${val}</span></td>`;
         const colour = val === 0 ? 'text-gray-300' : 'text-gray-700';
         return `<td class="py-2.5 px-2 text-center align-middle ${colour}"><strong>${val}</strong></td>`;
+    }
+
+    function gdCell(val, eliminated) {
+        if (eliminated) {
+            const sign = val > 0 ? '+' : '';
+            return `<td class="py-2.5 px-2 text-center align-middle text-gray-400"><span class="line-through">${sign}${val}</span></td>`;
+        }
+        const sign = val > 0 ? '+' : '';
+        const colour = val > 0 ? 'text-emerald-600' : val < 0 ? 'text-red-500' : 'text-gray-300';
+        return `<td class="py-2.5 px-2 text-center align-middle ${colour}"><strong>${sign}${val}</strong></td>`;
+    }
+
+    function ptsCell(val, eliminated) {
+        if (eliminated) return `<td class="py-2.5 px-2 text-center align-middle text-gray-400 font-bold"><span class="line-through">${val}</span></td>`;
+        const colour = val === 0 ? 'text-gray-300' : 'text-blue-700';
+        return `<td class="py-2.5 px-2 text-center align-middle ${colour} font-bold"><strong>${val}</strong></td>`;
     }
 
     // ================================================================
@@ -564,16 +503,30 @@
         tbody.innerHTML = '';
         const sorted = [...participants].sort((a, b) => a.name.localeCompare(b.name));
         sorted.forEach((p, i) => {
+            const allOut = p.teams.length > 0 && p.teams.every(t => isTeamEliminated(t));
             const tr = document.createElement('tr');
-            tr.className = i % 2 === 1 ? 'bg-gray-50' : 'bg-white';
+            tr.className = allOut
+                ? (i % 2 === 1 ? 'bg-gray-100' : 'bg-gray-50')
+                : (i % 2 === 1 ? 'bg-gray-50' : 'bg-white');
+            // Active teams first, then eliminated
+            const active = p.teams.filter(t => !isTeamEliminated(t));
+            const elimed = p.teams.filter(t => isTeamEliminated(t));
+            const teamChips = [...active, ...elimed].map(t => {
+                const elim = isTeamEliminated(t);
+                const chipClass = elim
+                    ? 'inline-flex items-center gap-1 bg-gray-200 text-gray-500 text-sm rounded-full px-2.5 py-0.5 m-0.5 line-through'
+                    : 'inline-flex items-center gap-1 bg-blue-200 text-blue-900 text-sm font-semibold rounded-full px-2.5 py-0.5 m-0.5';
+                return `<span class="${chipClass}">${getFlag(t)}${t}</span>`;
+            }).join('');
+            const nameClass  = allOut ? 'font-semibold text-gray-400 line-through' : 'font-semibold text-gray-800';
             tr.innerHTML = `
                 <td class="py-2.5 px-3">
                     <div class="flex items-center gap-2">
-                        ${avatar(p)}
-                        <span class="font-semibold text-gray-800">${p.name}</span>
+                        <span class="${allOut ? 'opacity-40' : ''}">${avatar(p)}</span>
+                        <span class="${nameClass}">${p.name}</span>
                     </div>
                 </td>
-                <td class="py-2.5 px-3">${p.teams.map(t => `<span class="inline-flex items-center gap-1 bg-blue-50 text-gray-800 text-sm rounded-full px-2.5 py-0.5 m-0.5">${getFlag(t)}${t}</span>`).join('')}</td>
+                <td class="py-2.5 px-3">${teamChips}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -582,6 +535,11 @@
     // ================================================================
     // RENDER TEAMS
     // ================================================================
+    function getTeamStageOrder(teamName) {
+        const info = teamKnockoutInfo[normaliseTeam(teamName).toLowerCase()];
+        return STAGE_ORDER[info?.stage || 'group'] || 0;
+    }
+
     function renderTeams() {
         const tbody = document.getElementById('teams-tbody');
         tbody.innerHTML = '';
@@ -591,28 +549,63 @@
         participants.forEach(p => {
             p.teams.forEach(t => {
                 const s = getStats(t);
-                rows.push({ team: t, owner: p.name, ...s });
+                const gs = teamGroupStats[normaliseTeam(t).toLowerCase()] || { pts: 0, gd: 0 };
+                const eliminated = isTeamEliminated(t);
+                rows.push({ team: t, owner: p.name, ...s, gs_pts: gs.pts, gs_gd: gs.gd, eliminated });
             });
         });
 
-        // Sort by points (3W+1D) desc, then games played desc, then name asc
-        rows.sort((a, b) => (b.w * 3 + b.d) - (a.w * 3 + a.d) || b.p - a.p || a.team.localeCompare(b.team));
+        // Sort by last stage desc (Final first), then group stage pts desc, then GD desc
+        rows.sort((a, b) => {
+            const sa = getTeamStageOrder(a.team);
+            const sb = getTeamStageOrder(b.team);
+            if (sb !== sa) return sb - sa;
+            return (b.gs_pts - a.gs_pts) || (b.gs_gd - a.gs_gd) || a.team.localeCompare(b.team);
+        });
+
+        // Identify group-stage-only eliminated teams for prize markers
+        const groupElimRows = rows.filter(r => {
+            const info = teamKnockoutInfo[normaliseTeam(r.team).toLowerCase()];
+            return r.eliminated && (!info?.stage || info.stage === 'group');
+        });
+        const groupPrizeTop    = groupElimRows[0]?.team ?? null;
+        const groupPrizeBottom = groupElimRows[groupElimRows.length - 1]?.team ?? null;
+        // Only award prizes if there are at least 2 group-stage teams (avoid marking same team twice)
+        const hasTwoGroupTeams = groupElimRows.length >= 2;
+
+        const prizeBadge = (amount) =>
+            `<span class="inline-flex items-center gap-1 ml-1 px-2 py-0.5 rounded-full text-xs font-bold whitespace-nowrap" style="background:#dcfce7;color:#15803d;text-decoration:none">💰 ${amount} prize</span>`;
 
         rows.forEach((r, i) => {
             const tr = document.createElement('tr');
-            tr.className = i % 2 === 1 ? 'bg-gray-50' : 'bg-white';
+            const elim = r.eliminated;
+            tr.className = elim
+                ? (i % 2 === 1 ? 'bg-gray-100' : 'bg-gray-50')
+                : (i % 2 === 1 ? 'bg-gray-50' : 'bg-white');
+            const nameClass = elim ? 'text-gray-400 line-through' : 'text-gray-800';
+            const ownerClass = elim ? 'text-gray-400 line-through' : 'text-gray-700';
+
+            let prizeHtml = '';
+            if (hasTwoGroupTeams) {
+                if (r.team === groupPrizeTop)    prizeHtml = prizeBadge('£15');
+                if (r.team === groupPrizeBottom) prizeHtml = prizeBadge('£10');
+            }
+
             tr.innerHTML = `
-                <td class="py-2.5 px-3"><span class="inline-flex items-center gap-2">${getFlag(r.team)}<strong class="text-gray-800">${r.team}</strong></span></td>
+                <td class="py-2.5 px-3"><span class="inline-flex items-center gap-2 flex-wrap">${getFlag(r.team)}<strong class="${nameClass}">${r.team}</strong>${prizeHtml}</span></td>
                 <td class="py-2.5 px-3">
                     <div class="flex items-center gap-2">
                         ${avatar(r.owner)}
-                        <span class="text-gray-700">${r.owner}</span>
+                        <span class="${ownerClass}">${r.owner}</span>
                     </div>
                 </td>
-                ${statCell(r.p)}
-                ${statCell(r.w)}
-                ${statCell(r.d)}
-                ${statCell(r.l)}
+                ${getLastStageCell(r.team)}
+                ${ptsCell(r.gs_pts, elim)}
+                ${gdCell(r.gs_gd, elim)}
+                ${statCell(r.p, elim)}
+                ${statCell(r.w, elim)}
+                ${statCell(r.d, elim)}
+                ${statCell(r.l, elim)}
             `;
             tbody.appendChild(tr);
         });
@@ -653,11 +646,6 @@
         return `<span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 ml-2">${info.icon} ${info.label}</span>`;
     }
 
-    function channelBadge(channel) {
-        if (!channel) return '';
-        return `<img src="channels/${channel}.png" alt="${channel}" title="${channel}" class="inline-block h-4 ml-2 align-middle" onerror="this.style.display='none'">`;
-    }
-
     function renderMatch(match, container) {
         const homeTeam = match.home_team_name_en || match.home_team_label || 'TBD';
         const awayTeam = match.away_team_name_en || match.away_team_label || 'TBD';
@@ -667,7 +655,6 @@
             .filter(Boolean)
             .map(o => `<span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg px-2.5 py-1">${avatar(o)}${o}</span>`)
             .join('');
-        const channel = !isFinished(match) ? getChannel(homeTeam, awayTeam) : null;
 
         const el = document.createElement('div');
         el.className = 'bg-white rounded-xl shadow-sm p-4 mb-3 border border-gray-100';
@@ -680,10 +667,237 @@
                 </div>
                 ${(isFinished(match) || isLive(match)) ? `<div class="text-lg font-bold text-gray-900 whitespace-nowrap tabular-nums">${match.home_score ?? '-'} – ${match.away_score ?? '-'}</div>` : ''}
             </div>
-            <div class="text-sm text-gray-500 mt-1.5">${formatGameTime(match.local_date, match.stadium_id)}${statusBadge(match)}${roundBadge(match.group)}${channelBadge(channel)}</div>
+            <div class="text-sm text-gray-500 mt-1.5">${formatGameTime(match.local_date, match.stadium_id)}${statusBadge(match)}${roundBadge(match.group)}</div>
             ${ownerTags ? `<div class="flex flex-wrap gap-1.5 mt-2">${ownerTags}</div>` : ''}
         `;
         container.appendChild(el);
+    }
+
+    // ================================================================
+    // RENDER BRACKET
+    // Builds a proper bracket tree using the API's match-ID references
+    // ("Winner Match X") so every card is placed at exactly the correct
+    // vertical position.  Card height is measured from a live DOM element
+    // so layout is immune to font/padding changes.
+    // ================================================================
+    function renderBracket(games) {
+        const container = document.getElementById('bracket-container');
+        container.innerHTML = '';
+
+        const ROUND_ORDER = ['R32', 'R16', 'QF', 'SF', 'FINAL'];
+        const CARD_W = 180;
+        const CONN_W = 24;
+        const HDG_H  = 28;
+        const GAP    = 8;
+        const LINE_C = '#d1d5db';
+        const MX     = CONN_W / 2;
+
+        // ── match-ID lookup ─────────────────────────────────────────
+        const matchById = {};
+        games.forEach(g => { if (g.id) matchById[String(g.id)] = g; });
+
+        // Parse "Winner Match 73" → "73"
+        function sourceId(label) {
+            const m = (label || '').match(/winner match (\d+)/i);
+            return m ? m[1] : null;
+        }
+
+        // ── Build compact card ──────────────────────────────────────
+        function makeCard(m) {
+            const home    = normaliseTeam(m.home_team_name_en || '');
+            const away    = normaliseTeam(m.away_team_name_en || '');
+            const homeTbd = !m.home_team_name_en;
+            const awayTbd = !m.away_team_name_en;
+            const hs  = parseInt(m.home_score, 10);
+            const as  = parseInt(m.away_score, 10);
+            const fin = isFinished(m);
+            const liv = isLive(m);
+            const homeWon = fin && !isNaN(hs) && !isNaN(as) && hs > as;
+            const awayWon = fin && !isNaN(hs) && !isNaN(as) && as > hs;
+
+            const row = (name, owner, won, lost, score, tbd, label) => {
+                const bg     = won ? 'background:#eff6ff;' : '';
+                const nameC  = tbd ? '#9ca3af' : lost ? '#9ca3af' : '#111827';
+                const nameFW = won ? '700' : '500';
+                const ownerC = lost ? '#c4c9d0' : '#9ca3af';
+                const scoreC = won ? '#1d4ed8' : lost ? '#9ca3af' : '#374151';
+                const ownerBit  = owner ? `<span style="color:${ownerC};font-size:10px;font-weight:400"> · ${owner}</span>` : '';
+                const scoreVal  = (fin || liv) && !isNaN(score) ? score : '–';
+                const scoreCVal = (fin || liv) && !isNaN(score) ? scoreC : '#d1d5db';
+                const displayName = tbd ? (label || 'TBD') : name;
+                const nameStyle   = tbd ? 'color:#9ca3af;font-style:italic;' : '';
+                return `<div style="display:flex;align-items:center;gap:3px;padding:3px 6px;${bg}">` +
+                    `<span style="flex-shrink:0;line-height:0;font-size:0">${tbd ? '' : getFlag(name)}</span>` +
+                    `<span style="flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:11px;color:${nameC};font-weight:${nameFW};line-height:1.45;${nameStyle}">${displayName}${ownerBit}</span>` +
+                    `<span style="margin-left:auto;padding-left:6px;font-size:11px;font-weight:700;color:${scoreCVal};white-space:nowrap;flex-shrink:0;min-width:1em;text-align:right">${scoreVal}</span>` +
+                    `</div>`;
+            };
+
+            const card = document.createElement('div');
+            card.style.cssText = `width:${CARD_W}px;background:white;border-radius:6px;` +
+                `box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e5e7eb;overflow:hidden;box-sizing:border-box;`;
+            card.innerHTML =
+                row(home, getOwner(home), homeWon, awayWon, hs, homeTbd, m.home_team_label) +
+                `<div style="border-top:1px solid #f3f4f6"></div>` +
+                row(away, getOwner(away), awayWon, homeWon, as, awayTbd, m.away_team_label);
+            return card;
+        }
+
+        // ── Measure actual card height from a live DOM element ──────
+        const sampleGame = games.find(g => g.group === 'R32' && g.home_team_name_en)
+                        || games.find(g => g.group === 'R32')
+                        || games[0];
+        let CARD_H = 47; // safe fallback
+        if (sampleGame) {
+            const probe = makeCard(sampleGame);
+            probe.style.position  = 'fixed';
+            probe.style.top       = '-9999px';
+            probe.style.left      = '0';
+            probe.style.visibility = 'hidden';
+            document.body.appendChild(probe);
+            const h = probe.getBoundingClientRect().height;
+            document.body.removeChild(probe);
+            if (h > 0) CARD_H = Math.ceil(h);
+        }
+        const BASE_SLOT = CARD_H + GAP;
+
+        // ── Build bracket tree from the Final via match-ID links ────
+        function buildNode(game, depth) {
+            if (!game || depth > 6) return null;
+            const hSrc = sourceId(game.home_team_label);
+            const aSrc = sourceId(game.away_team_label);
+            return {
+                game,
+                round: game.group,
+                homeChild: hSrc ? buildNode(matchById[hSrc], depth + 1) : null,
+                awayChild: aSrc ? buildNode(matchById[aSrc], depth + 1) : null,
+            };
+        }
+
+        const finalGame = games.find(g => g.group === 'FINAL');
+        if (!finalGame) {
+            container.innerHTML = '<div style="color:#9ca3af;padding:32px;text-align:center">No knockout matches available yet.</div>';
+            return;
+        }
+        const tree = buildNode(finalGame, 0);
+
+        // ── Assign y-positions: leaves are evenly spaced, parents
+        //    are centred between their two children ──────────────────
+        let leafIdx = 0;
+        function assignY(node) {
+            if (!node) return;
+            if (!node.homeChild && !node.awayChild) {
+                node.y = HDG_H + leafIdx * BASE_SLOT + BASE_SLOT / 2;
+                leafIdx++;
+            } else {
+                assignY(node.homeChild);
+                assignY(node.awayChild);
+                const ys = [node.homeChild, node.awayChild]
+                    .filter(Boolean).map(c => c.y);
+                node.y = ys.reduce((a, b) => a + b, 0) / ys.length;
+            }
+        }
+        assignY(tree);
+
+        const totalH = HDG_H + leafIdx * BASE_SLOT;
+
+        // ── Collect nodes by round ──────────────────────────────────
+        const byRound = {};
+        ROUND_ORDER.forEach(r => { byRound[r] = []; });
+        function collect(node) {
+            if (!node) return;
+            if (byRound[node.round]) byRound[node.round].push(node);
+            collect(node.homeChild);
+            collect(node.awayChild);
+        }
+        collect(tree);
+        ROUND_ORDER.forEach(r => byRound[r].sort((a, b) => a.y - b.y));
+
+        // ── Helper: draw a 1-px line ────────────────────────────────
+        function addLine(parent, x1, y1, x2, y2) {
+            const el = document.createElement('div');
+            if (y1 === y2) {
+                el.style.cssText = `position:absolute;top:${y1}px;left:${Math.min(x1,x2)}px;` +
+                    `width:${Math.abs(x2-x1)}px;height:1px;background:${LINE_C};`;
+            } else {
+                el.style.cssText = `position:absolute;top:${Math.min(y1,y2)}px;left:${x1}px;` +
+                    `width:1px;height:${Math.abs(y2-y1)+1}px;background:${LINE_C};`;
+            }
+            parent.appendChild(el);
+        }
+
+        // ── Render columns ──────────────────────────────────────────
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'display:flex;align-items:flex-start;';
+
+        const roundsToShow = ROUND_ORDER.filter(r => byRound[r].length > 0);
+        roundsToShow.forEach((roundKey, colIdx) => {
+            const nodes = byRound[roundKey];
+            const info  = GROUP_LABELS[roundKey] || { label: roundKey, icon: '⚔️' };
+
+            // card column
+            const col = document.createElement('div');
+            col.style.cssText = `flex-shrink:0;width:${CARD_W}px;height:${totalH}px;position:relative;`;
+
+            const hdg = document.createElement('div');
+            hdg.style.cssText = `position:absolute;top:0;left:0;right:0;height:${HDG_H}px;` +
+                `display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;` +
+                `color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;overflow:hidden;`;
+            hdg.textContent = `${info.icon} ${info.label}`;
+            col.appendChild(hdg);
+
+            nodes.forEach(node => {
+                const card = makeCard(node.game);
+                card.style.position = 'absolute';
+                card.style.top  = `${Math.round(node.y - CARD_H / 2)}px`;
+                card.style.left = '0';
+                col.appendChild(card);
+            });
+            wrapper.appendChild(col);
+
+            // connector column (not after the last round)
+            if (colIdx < roundsToShow.length - 1) {
+                const conn = document.createElement('div');
+                conn.style.cssText = `flex-shrink:0;width:${CONN_W}px;height:${totalH}px;position:relative;`;
+
+                nodes.forEach(node => {
+                    const hc = node.homeChild;
+                    const ac = node.awayChild;
+                    if (hc && ac) {
+                        addLine(conn, 0,  hc.y,    MX, hc.y);   // top input arm
+                        addLine(conn, 0,  ac.y,    MX, ac.y);   // bottom input arm
+                        addLine(conn, MX, hc.y,    MX, ac.y);   // vertical
+                        addLine(conn, MX, node.y,  CONN_W, node.y); // output arm
+                    } else if (hc || ac) {
+                        // single child — straight through
+                        addLine(conn, 0, node.y, CONN_W, node.y);
+                    }
+                });
+                wrapper.appendChild(conn);
+            }
+        });
+
+        container.appendChild(wrapper);
+
+        // ── 3rd-place match ─────────────────────────────────────────
+        const third = games.filter(g => g.group === '3rd')
+            .sort((a, b) => (parseGameTime(a.local_date, a.stadium_id) || 0) - (parseGameTime(b.local_date, b.stadium_id) || 0));
+        if (third.length > 0) {
+            const info3 = GROUP_LABELS['3rd'] || { label: 'Third Place', icon: '🥉' };
+            const col3 = document.createElement('div');
+            col3.style.cssText = `flex-shrink:0;margin-left:16px;`;
+            const hdg3 = document.createElement('div');
+            hdg3.style.cssText = `height:${HDG_H}px;display:flex;align-items:center;justify-content:center;` +
+                `font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;`;
+            hdg3.textContent = `${info3.icon} ${info3.label}`;
+            col3.appendChild(hdg3);
+            third.forEach(m => {
+                const card = makeCard(m);
+                card.style.marginBottom = '6px';
+                col3.appendChild(card);
+            });
+            container.appendChild(col3);
+        }
     }
 
     async function fetchAndRender() {
@@ -695,6 +909,7 @@
             buildTeamStats(games);
             renderPeople();
             renderTeams();
+            renderBracket(games);
 
             const resultsEl = document.getElementById('results-container');
             const upcomingEl = document.getElementById('upcoming-container');
@@ -735,8 +950,8 @@
     // ================================================================
     // INIT
     // ================================================================
-    Promise.all([loadTeamFlags(), fetchAndRender()]).finally(() => {
-        document.getElementById('loading-overlay').classList.add('hidden');
+    loadTeamFlags().then(() => {
+        fetchAndRender();
     });
     setInterval(fetchAndRender, 60000);
 </script>
