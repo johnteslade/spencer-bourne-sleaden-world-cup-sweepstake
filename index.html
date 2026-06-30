@@ -656,6 +656,17 @@
             .map(o => `<span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg px-2.5 py-1">${avatar(o)}${o}</span>`)
             .join('');
 
+        const hPenR = parseInt(match.home_penalty_score, 10);
+        const aPenR = parseInt(match.away_penalty_score, 10);
+        const hasPensR = (isFinished(match) || isLive(match))
+            && !isNaN(parseInt(match.home_score, 10))
+            && !isNaN(parseInt(match.away_score, 10))
+            && parseInt(match.home_score, 10) === parseInt(match.away_score, 10)
+            && !isNaN(hPenR) && !isNaN(aPenR);
+        const penScoreHtml = hasPensR
+            ? `<div class="text-xs font-semibold text-purple-600 mt-0.5 text-right">Pens: ${hPenR} – ${aPenR}</div>`
+            : '';
+
         const el = document.createElement('div');
         el.className = 'bg-white rounded-xl shadow-sm p-4 mb-3 border border-gray-100';
         el.innerHTML = `
@@ -665,7 +676,7 @@
                     <span class="text-gray-400 mx-1">vs</span>
                     ${getMatchFlag(awayTeam)}<strong>${awayTeam}</strong>
                 </div>
-                ${(isFinished(match) || isLive(match)) ? `<div class="text-lg font-bold text-gray-900 whitespace-nowrap tabular-nums">${match.home_score ?? '-'} – ${match.away_score ?? '-'}</div>` : ''}
+                ${(isFinished(match) || isLive(match)) ? `<div class="text-right"><div class="text-lg font-bold text-gray-900 whitespace-nowrap tabular-nums">${match.home_score ?? '-'} – ${match.away_score ?? '-'}</div>${penScoreHtml}</div>` : ''}
             </div>
             <div class="text-sm text-gray-500 mt-1.5">${formatGameTime(match.local_date, match.stadium_id)}${statusBadge(match)}${roundBadge(match.group)}</div>
             ${ownerTags ? `<div class="flex flex-wrap gap-1.5 mt-2">${ownerTags}</div>` : ''}
@@ -712,10 +723,13 @@
             const as  = parseInt(m.away_score, 10);
             const fin = isFinished(m);
             const liv = isLive(m);
-            const homeWon = fin && !isNaN(hs) && !isNaN(as) && hs > as;
-            const awayWon = fin && !isNaN(hs) && !isNaN(as) && as > hs;
+            const hPen = parseInt(m.home_penalty_score, 10);
+            const aPen = parseInt(m.away_penalty_score, 10);
+            const hasPens = fin && !isNaN(hs) && !isNaN(as) && hs === as && !isNaN(hPen) && !isNaN(aPen);
+            const homeWon = fin && !isNaN(hs) && !isNaN(as) && (hs > as || (hasPens && hPen > aPen));
+            const awayWon = fin && !isNaN(hs) && !isNaN(as) && (as > hs || (hasPens && aPen > hPen));
 
-            const row = (name, owner, won, lost, score, tbd, label) => {
+            const row = (name, owner, won, lost, score, tbd, label, penScore) => {
                 const bg     = won ? 'background:#eff6ff;' : '';
                 const nameC  = tbd ? '#9ca3af' : lost ? '#9ca3af' : '#111827';
                 const nameFW = won ? '700' : '500';
@@ -724,12 +738,14 @@
                 const ownerBit  = owner ? `<span style="color:${ownerC};font-size:10px;font-weight:400"> · ${owner}</span>` : '';
                 const scoreVal  = (fin || liv) && !isNaN(score) ? score : '–';
                 const scoreCVal = (fin || liv) && !isNaN(score) ? scoreC : '#d1d5db';
+                const penBit = (penScore !== null && penScore !== undefined && !isNaN(penScore))
+                    ? `<span style="font-size:10px;font-weight:600;color:#7c3aed;">(${penScore})</span>` : '';
                 const displayName = tbd ? (label || 'TBD') : name;
                 const nameStyle   = tbd ? 'color:#9ca3af;font-style:italic;' : '';
                 return `<div style="display:flex;align-items:center;gap:3px;padding:3px 6px;${bg}">` +
                     `<span style="flex-shrink:0;line-height:0;font-size:0">${tbd ? '' : getFlag(name)}</span>` +
                     `<span style="flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:11px;color:${nameC};font-weight:${nameFW};line-height:1.45;${nameStyle}">${displayName}${ownerBit}</span>` +
-                    `<span style="margin-left:auto;padding-left:6px;font-size:11px;font-weight:700;color:${scoreCVal};white-space:nowrap;flex-shrink:0;min-width:1em;text-align:right">${scoreVal}</span>` +
+                    `<span style="margin-left:auto;padding-left:6px;font-size:11px;font-weight:700;color:${scoreCVal};white-space:nowrap;flex-shrink:0;text-align:right;display:inline-flex;align-items:center;gap:2px;">${scoreVal}${penBit}</span>` +
                     `</div>`;
             };
 
@@ -737,9 +753,9 @@
             card.style.cssText = `width:${CARD_W}px;background:white;border-radius:6px;` +
                 `box-shadow:0 1px 3px rgba(0,0,0,0.08);border:1px solid #e5e7eb;overflow:hidden;box-sizing:border-box;`;
             card.innerHTML =
-                row(home, getOwner(home), homeWon, awayWon, hs, homeTbd, m.home_team_label) +
+                row(home, getOwner(home), homeWon, awayWon, hs, homeTbd, m.home_team_label, hasPens ? hPen : null) +
                 `<div style="border-top:1px solid #f3f4f6"></div>` +
-                row(away, getOwner(away), awayWon, homeWon, as, awayTbd, m.away_team_label);
+                row(away, getOwner(away), awayWon, homeWon, as, awayTbd, m.away_team_label, hasPens ? aPen : null);
             return card;
         }
 
@@ -860,7 +876,11 @@
                 const conn = document.createElement('div');
                 conn.style.cssText = `flex-shrink:0;width:${CONN_W}px;height:${totalH}px;position:relative;`;
 
-                nodes.forEach(node => {
+                // Use the NEXT round's nodes: their children are in the current column,
+                // so child y-positions align with the current cards (left side of connector)
+                // and the node y-positions align with the next cards (right side of connector).
+                const nextNodes = byRound[roundsToShow[colIdx + 1]];
+                nextNodes.forEach(node => {
                     const hc = node.homeChild;
                     const ac = node.awayChild;
                     if (hc && ac) {
